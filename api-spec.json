@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Finance Tracking App",
-    "description": "Peruntukan : project R&D untuk tracking keuangan dengan budget bulanan ",
+    "description": "Peruntukan : project R&D untuk tracking keuangan dengan budget bulanan (berdasarkan LRS: Users, Monthly_Budget, history)",
     "version": "1.0.0"
   },
   "servers": [
@@ -13,9 +13,7 @@
   "paths": {
     "/api/users": {
       "post": {
-        "tags": [
-          "User API"
-        ],
+        "tags": ["User API"],
         "description": "Register new user",
         "requestBody": {
           "content": {
@@ -23,21 +21,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
+                  "id": { "type": "string" },
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
                 },
-                "required": [
-                  "id",
-                  "name",
-                  "password"
-                ]
+                "required": ["id", "username", "email", "password"]
               }
             }
           }
@@ -53,18 +42,11 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "created_at": {
-                          "type": "number"
-                        },
-                        "updated_at": {
-                          "type": "number"
-                        }
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "email": { "type": "string" },
+                        "created_at": { "type": "number" },
+                        "deleted_at": { "type": "number", "nullable": true }
                       }
                     }
                   }
@@ -76,17 +58,13 @@
       },
       "delete": {
         "description": "Logout user",
-        "tags": [
-          "User API"
-        ],
+        "tags": ["User API"],
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -96,11 +74,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "boolean"
-                    }
-                  }
+                  "properties": { "data": { "type": "boolean" } }
                 }
               }
             }
@@ -108,29 +82,21 @@
         }
       }
     },
+
     "/api/users/_login": {
       "post": {
         "description": "Login user",
-        "tags": [
-          "User API"
-        ],
+        "tags": ["User API"],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
+                  "id": { "type": "string" },
+                  "password": { "type": "string" }
                 },
-                "required": [
-                  "id",
-                  "password"
-                ]
+                "required": ["id", "password"]
               }
             }
           }
@@ -145,9 +111,198 @@
                   "properties": {
                     "data": {
                       "type": "object",
+                      "properties": { "token": { "type": "string" } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users/_current": {
+      "get": {
+        "tags": ["User API"],
+        "description": "Get current user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
                       "properties": {
-                        "token": {
-                          "type": "string"
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "email": { "type": "string" },
+                        "created_at": { "type": "number" },
+                        "deleted_at": { "type": "number", "nullable": true }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["User API"],
+        "description": "Update current user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "email": { "type": "string" },
+                        "created_at": { "type": "number" },
+                        "deleted_at": { "type": "number", "nullable": true }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/budgets": {
+      "post": {
+        "tags": ["Monthly Budget API"],
+        "description": "Create monthly budget (Monthly_Budget) for current user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "budget": { "type": "number" },
+                  "date": { "type": "number", "description": "Epoch timestamp (representing the month)" }
+                },
+                "required": ["budget", "date"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create monthly budget",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "budget": { "type": "number" },
+                        "date": { "type": "number" },
+                        "user_id": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Monthly Budget API"],
+        "description": "List monthly budgets of current user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "number" },
+            "description": "Epoch timestamp filter start"
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "number" },
+            "description": "Epoch timestamp filter end"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success list monthly budgets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "budget": { "type": "number" },
+                          "date": { "type": "number" },
+                          "user_id": { "type": "string" }
                         }
                       }
                     }
@@ -159,25 +314,28 @@
         }
       }
     },
-    "/api/users/_current": {
+
+    "/api/budgets/{budget_id}": {
       "get": {
-        "tags": [
-          "User API"
-        ],
-        "description": "Get current user",
+        "tags": ["Monthly Budget API"],
+        "description": "Get monthly budget by id",
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "budget_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success register new user",
+            "description": "Success get monthly budget",
             "content": {
               "application/json": {
                 "schema": {
@@ -186,18 +344,10 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "created_at": {
-                          "type": "number"
-                        },
-                        "updated_at": {
-                          "type": "number"
-                        }
+                        "id": { "type": "string" },
+                        "budget": { "type": "number" },
+                        "date": { "type": "number" },
+                        "user_id": { "type": "string" }
                       }
                     }
                   }
@@ -208,18 +358,20 @@
         }
       },
       "patch": {
-        "tags": [
-          "User API"
-        ],
-        "description": "Update current user",
+        "tags": ["Monthly Budget API"],
+        "description": "Update monthly budget by id",
         "parameters": [
           {
             "name": "Authorization",
             "in": "header",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "budget_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -228,12 +380,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "password": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
+                  "budget": { "type": "number" },
+                  "date": { "type": "number" }
                 }
               }
             }
@@ -241,7 +389,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success register new user",
+            "description": "Success update monthly budget",
             "content": {
               "application/json": {
                 "schema": {
@@ -250,21 +398,287 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "created_at": {
-                          "type": "number"
-                        },
-                        "updated_at": {
-                          "type": "number"
+                        "id": { "type": "string" },
+                        "budget": { "type": "number" },
+                        "date": { "type": "number" },
+                        "user_id": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Monthly Budget API"],
+        "description": "Delete monthly budget by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "budget_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete monthly budget",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "data": { "type": "boolean" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/budgets/{budget_id}/history": {
+      "post": {
+        "tags": ["History API"],
+        "description": "Create history record for a monthly budget (pengeluaran)",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "budget_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": { "type": "number" },
+                  "amount": { "type": "number" }
+                },
+                "required": ["date", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "date": { "type": "number" },
+                        "amount": { "type": "number" },
+                        "budget_id": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["History API"],
+        "description": "List history records for a monthly budget",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "budget_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success list history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "date": { "type": "number" },
+                          "amount": { "type": "number" },
+                          "budget_id": { "type": "string" }
                         }
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/history/{history_id}": {
+      "get": {
+        "tags": ["History API"],
+        "description": "Get history by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "history_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "date": { "type": "number" },
+                        "amount": { "type": "number" },
+                        "budget_id": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["History API"],
+        "description": "Update history by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "history_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "date": { "type": "number" },
+                  "amount": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "date": { "type": "number" },
+                        "amount": { "type": "number" },
+                        "budget_id": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["History API"],
+        "description": "Delete history by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "history_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "data": { "type": "boolean" } }
                 }
               }
             }
