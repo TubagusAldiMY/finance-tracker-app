@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+import DashboardPage from './views/DashboardPage.vue';
+</script>
 
 <template>
   <h1>You did it!</h1>
@@ -6,6 +8,7 @@
     Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
     documentation
   </p>
+  <DashboardPage />
 </template>
 
 <style scoped></style>
