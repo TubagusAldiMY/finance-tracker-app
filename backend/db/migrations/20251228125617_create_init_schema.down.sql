@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS histories;
+DROP TABLE IF EXISTS monthly_budgets;
+DROP TABLE IF EXISTS users;
