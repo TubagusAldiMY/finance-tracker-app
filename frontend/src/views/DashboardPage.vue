@@ -20,6 +20,17 @@ const daysInMonth = computed(() => [
 
 const weekDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
 
+const today = new Date()
+
+const isToday = (day) => {
+  const d = currentDate.value
+  return (
+    day === today.getDate() &&
+    d.getMonth() === today.getMonth() &&
+    d.getFullYear() === today.getFullYear()
+  )
+}
+
 function prevMonth() {
   const d = currentDate.value
   currentDate.value = new Date(d.getFullYear(), d.getMonth() - 1, 1)
@@ -56,9 +67,12 @@ function nextMonth() {
       </div>
     </div>
     <div class="grid grid-cols-7 gap-2 text-center">
-      <div v-for="day in daysInMonth" :key="day" class="py-2 rounded-md border border-gray-200
-               hover:bg-blue-100 cursor-pointer
-               text-gray-700">
+      <div v-for="day in daysInMonth" :key="day" :class="[
+        'py-2 rounded-md border text-center cursor-pointer',
+        isToday(day)
+          ? 'bg-blue-500 text-white font-semibold'
+          : 'border-gray-200 hover:bg-blue-100 text-gray-700'
+      ]">
         {{ day }}
       </div>
     </div>
