@@ -34,8 +34,40 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": user})
 }
 
+func (h *Handler) Login(c *fiber.Ctx) error {
+	var req LoginRequest
+
+	// 1. Parsing Body
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request Body",
+		})
+	}
+
+	// 2. Panggil Usecase
+	resp, err := h.useCase.Login(c.Context(), &req)
+	if err != nil {
+		// 3. Error Handling Spesifik
+		if err == ErrInvalidCredentials {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		// Jika Error Lain (Misal DB mati/config error), return 500
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Internal Server Error",
+		})
+	}
+	// Sukses - Return Token (Status 200 OK)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data": resp,
+	})
+}
+
 // Fungsi untuk mendaftarkan route module ini
 func (h *Handler) RegisterRoutes(app *fiber.App) {
 	api := app.Group("/api/users")
 	api.Post("/register", h.Register)
+	api.Post("/login", h.Login)
 }

@@ -20,19 +20,12 @@ type BootstrapConfig struct {
 
 func Bootstrap(config *BootstrapConfig) {
 
-	// 1. Setup Repository
-	// Repository sekarang butuh *pgxpool.Pool langsung
 	userRepo := user.NewRepository(config.DB)
 
-	// 2. Setup UseCase
-	// UseCase butuh Repository, Logger, dan Validator
-	userUseCase := user.NewUseCase(userRepo, config.Log, config.Validate)
+	userUseCase := user.NewUseCase(userRepo, config.Log, config.Validate, config.Config)
 
-	// 3. Setup Handler (Controller)
 	userHandler := user.NewHandler(userUseCase)
 
-	// 4. Register Routes
-	// Route didaftarkan langsung oleh handlernya (Self-contained)
 	userHandler.RegisterRoutes(config.App)
 
 }
