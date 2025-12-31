@@ -128,7 +128,7 @@ func (u *useCase) Login(ctx context.Context, req *LoginRequest) (*LoginResponse,
 	// Ambil Secret Key
 	jwtSecret := u.cfg.GetString("jwt.secret")
 	if jwtSecret == "" {
-		u.log.Fatal("JWT Secret Is not Configured")
+		u.log.Error("JWT Secret Is not Configured")
 		return nil, ErrInternalServer
 	}
 
