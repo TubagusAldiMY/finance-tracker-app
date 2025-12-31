@@ -60,7 +60,7 @@ func (u *useCase) Register(ctx context.Context, req *RegisterRequest) (*Register
 		}
 
 		u.log.WithError(err).Error("Failed to save user")
-		return nil, ErrInternalServer // <-- GUNAKAN VARIABLE INI
+		return nil, ErrInternalServer
 	}
 
 	// 5. Return Response

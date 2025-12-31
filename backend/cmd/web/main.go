@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/TubagusAldiMY/finance-tracker-app/backend/internal/infra"
-	"github.com/TubagusAldiMY/finance-tracker-app/backend/internal/modules/user"
 )
 
 func main() {
@@ -14,14 +13,14 @@ func main() {
 	validate := infra.NewValidator(viperConfig)
 	app := infra.NewFiber(viperConfig)
 
-	// 2. Init Modules (Dependency Injection)
-	// Module: User
-	userRepo := user.NewRepository(db)
-	userUseCase := user.NewUseCase(userRepo, log, validate)
-	userHandler := user.NewHandler(userUseCase)
-
-	// Register Routes dari Module User
-	userHandler.RegisterRoutes(app)
+	// 2. Bootstrap Application (Wiring semua module di sini)
+	infra.Bootstrap(&infra.BootstrapConfig{
+		DB:       db,
+		App:      app,
+		Log:      log,
+		Validate: validate,
+		Config:   viperConfig,
+	})
 
 	// 3. Start Server
 	webPort := viperConfig.GetInt("web.port")

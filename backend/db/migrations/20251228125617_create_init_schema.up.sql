@@ -4,11 +4,15 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- 1. Table: Users
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY, -- Menggunakan tipe data UUID native
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP WITH TIME ZONE
+    deleted_at TIMESTAMP WITH TIME ZONE,
+
+    -- Definisi Constraint Eksplisit
+    CONSTRAINT users_email_unique UNIQUE (email),
+    CONSTRAINT users_username_unique UNIQUE (username)
 );
 
 -- Index untuk pencarian cepat login berdasarkan email
@@ -42,7 +46,7 @@ CREATE TABLE IF NOT EXISTS histories (
     CONSTRAINT fk_budget
     FOREIGN KEY(budget_id)
     REFERENCES monthly_budgets(id)
-    ON DELETE CASCADE -- Hapus budget = hapus history
+    ON DELETE CASCADE
 );
 
 -- Index untuk load history per budget

@@ -15,15 +15,23 @@ func NewHandler(useCase UseCase) *Handler {
 func (h *Handler) Register(c *fiber.Ctx) error {
 	var req RegisterRequest
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
 	user, err := h.useCase.Register(c.Context(), &req)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		// 1. Cek Error Spesifik (409 Conflict)
+		if err == ErrEmailTaken || err == ErrUsernameTaken {
+			return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": err.Error()})
+		}
+
+		// 2. Default Error (500 Internal Server Error)
+		// Tidak perlu 'if err != nil' lagi disini, karena sudah pasti error (else logic)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
 	}
 
-	return c.Status(201).JSON(fiber.Map{"data": user})
+	// 3. Sukses (201 Created)
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": user})
 }
 
 // Fungsi untuk mendaftarkan route module ini
