@@ -39,6 +39,14 @@ func (m *MockRepository) FindByEmail(ctx context.Context, email string) (*user.U
 	return args.Get(0).(*user.User), args.Error(1)
 }
 
+func (m *MockRepository) FindByID(ctx context.Context, id string) (*user.User, error) {
+	args := m.Called(ctx, id)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*user.User), args.Error(1)
+}
+
 // ==========================================
 // 2. HELPER SETUP
 // ==========================================
@@ -298,6 +306,68 @@ func TestLogin_MissingJWTSecret(t *testing.T) {
 	resp, err := u.Login(context.Background(), req)
 
 	// Expectation: Harusnya error internal server (daripada panic)
+	assert.Error(t, err)
+	assert.Equal(t, user.ErrInternalServer, err)
+	assert.Nil(t, resp)
+}
+
+// ==========================================
+// 5. GROUP: GET ME TESTS (PROFILE)
+// ==========================================
+
+func TestGetMe_Success(t *testing.T) {
+	u, mockRepo, _ := setupTest()
+
+	userID := "user-uuid-123"
+	dummyUser := &user.User{
+		ID:        userID,
+		Username:  "architect",
+		Email:     "architect@example.com",
+		CreatedAt: time.Now(),
+	}
+
+	// Expectation: Repo FindByID dipanggil dengan ID yang benar
+	mockRepo.On("FindByID", mock.Anything, userID).Return(dummyUser, nil)
+
+	// Action
+	resp, err := u.GetMe(context.Background(), userID)
+
+	// Assertions
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, dummyUser.ID, resp.ID)
+	assert.Equal(t, dummyUser.Email, resp.Email)
+}
+
+func TestGetMe_UserNotFound(t *testing.T) {
+	u, mockRepo, _ := setupTest()
+
+	userID := "ghost-uuid"
+
+	// Expectation: User tidak ditemukan (return nil, nil)
+	mockRepo.On("FindByID", mock.Anything, userID).Return(nil, nil)
+
+	// Action
+	resp, err := u.GetMe(context.Background(), userID)
+
+	// Assertions
+	assert.Error(t, err)
+	assert.Nil(t, resp)
+	assert.Equal(t, "user not found", err.Error())
+}
+
+func TestGetMe_RepositoryError(t *testing.T) {
+	u, mockRepo, _ := setupTest()
+
+	userID := "error-uuid"
+
+	// Expectation: DB Error
+	mockRepo.On("FindByID", mock.Anything, userID).Return(nil, errors.New("db connection failed"))
+
+	// Action
+	resp, err := u.GetMe(context.Background(), userID)
+
+	// Assertions
 	assert.Error(t, err)
 	assert.Equal(t, user.ErrInternalServer, err)
 	assert.Nil(t, resp)

@@ -18,6 +18,7 @@ var (
 type Repository interface {
 	Save(ctx context.Context, user *User) error
 	FindByEmail(ctx context.Context, email string) (*User, error)
+	FindByID(ctx context.Context, id string) (*User, error)
 }
 
 type repository struct {
@@ -69,5 +70,21 @@ func (r *repository) FindByEmail(ctx context.Context, email string) (*User, erro
 		return nil, err
 	}
 
+	return &user, nil
+}
+
+func (r *repository) FindByID(ctx context.Context, id string) (*User, error) {
+	query := `SELECT id, username, email, password, created_at, deleted_at FROM users WHERE id = $1`
+
+	var user User
+	err := r.db.QueryRow(ctx, query, id).Scan(
+		&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt, &user.DeletedAt,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
 	return &user, nil
 }

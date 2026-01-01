@@ -21,6 +21,7 @@ var (
 type UseCase interface {
 	Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error)
 	Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error)
+	GetMe(ctx context.Context, userID string) (*UserResponse, error)
 }
 
 type useCase struct {
@@ -122,7 +123,6 @@ func (u *useCase) Login(ctx context.Context, req *LoginRequest) (*LoginResponse,
 		"email": user.Email,
 	}
 
-	// PERBAIKAN: Gunakan HS256 untuk secret key string
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Ambil Secret Key
@@ -149,5 +149,29 @@ func (u *useCase) Login(ctx context.Context, req *LoginRequest) (*LoginResponse,
 			Email:     user.Email,
 			CreatedAt: user.CreatedAt,
 		},
+	}, nil
+}
+
+func (u *useCase) GetMe(ctx context.Context, userID string) (*UserResponse, error) {
+	// Kita reuse FindByEmail logic, tapi kali ini kita butuh FindByID di repository
+	// Karena FindByID belum ada, mari kita buat di langkah berikutnya.
+	// TAPI TUNGGU, di repository Anda belum ada FindByID?
+	// Mari kita tambahkan logic FindByID di repository dulu (lihat Langkah 3).
+
+	// Asumsi: Repository sudah punya FindByID (akan kita buat di Langkah 3)
+	user, err := u.repo.FindByID(ctx, userID)
+	if err != nil {
+		u.log.WithError(err).Error("GetMe: failed to find user")
+		return nil, ErrInternalServer
+	}
+	if user == nil {
+		return nil, errors.New("user not found")
+	}
+
+	return &UserResponse{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
 	}, nil
 }

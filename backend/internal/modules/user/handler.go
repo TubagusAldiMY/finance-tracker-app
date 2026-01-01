@@ -65,9 +65,26 @@ func (h *Handler) Login(c *fiber.Ctx) error {
 	})
 }
 
-// Fungsi untuk mendaftarkan route module ini
-func (h *Handler) RegisterRoutes(app *fiber.App) {
+func (h *Handler) GetMe(c *fiber.Ctx) error {
+	// Ambil user_id dari Locals (yang diset oleh Middleware)
+	userID, ok := c.Locals("user_id").(string)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
+	resp, err := h.useCase.GetMe(c.Context(), userID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": resp})
+}
+
+func (h *Handler) RegisterRoutes(app *fiber.App, authMiddleware fiber.Handler) {
 	api := app.Group("/api/users")
+
 	api.Post("/register", h.Register)
 	api.Post("/login", h.Login)
+
+	api.Get("/current", authMiddleware, h.GetMe)
 }

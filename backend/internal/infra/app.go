@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"github.com/TubagusAldiMY/finance-tracker-app/backend/internal/infra/middleware"
 	"github.com/TubagusAldiMY/finance-tracker-app/backend/internal/modules/user" // Import module User
 
 	"github.com/go-playground/validator/v10"
@@ -21,11 +22,10 @@ type BootstrapConfig struct {
 func Bootstrap(config *BootstrapConfig) {
 
 	userRepo := user.NewRepository(config.DB)
-
 	userUseCase := user.NewUseCase(userRepo, config.Log, config.Validate, config.Config)
-
 	userHandler := user.NewHandler(userUseCase)
 
-	userHandler.RegisterRoutes(config.App)
+	authMiddleware := middleware.AuthMiddleware(config.Config)
 
+	userHandler.RegisterRoutes(config.App, authMiddleware)
 }
