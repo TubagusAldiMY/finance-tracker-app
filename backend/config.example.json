@@ -1,0 +1,30 @@
+{
+  "app": {
+    "name": "finance-tracker-app",
+    "version" : "1.0.0",
+    "authors" : "Firlan Syah & Tubagus Aldi Maulana Yusuf"
+  },
+  "web": {
+    "prefork": false,
+    "port": 8080
+  },
+  "log": {
+    "level": 6
+  },
+  "database": {
+    "username": "",
+    "password": "",
+    "host": "",
+    "port": 5432,
+    "name": "",
+    "pool": {
+      "idle": 10,
+      "max": 100,
+      "lifetime": 300
+    }
+  },
+  "jwt": {
+    "secret": "",
+    "ttl": ""
+  }
+}
