@@ -1,4 +1,7 @@
-
+### Menginstall Golang Migrate
+```
+go install -tags ‘database1,database2’ github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+```
 
 ### Menjalankan Migrate UP
 ```shell
