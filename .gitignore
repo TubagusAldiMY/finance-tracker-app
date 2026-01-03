@@ -16,7 +16,7 @@
 coverage.*
 *.coverprofile
 profile.cov
-
+.42c
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
@@ -26,6 +26,9 @@ go.work.sum
 
 # env file
 .env
+.ignore
+/backend/config.json
+/frontend/.vscode
 
 # Editor/IDE
 # .idea/
