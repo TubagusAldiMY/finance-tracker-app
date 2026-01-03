@@ -278,30 +278,33 @@ const docTemplate = `{
             "properties": {
                 "budget": {
                     "type": "number",
-                    "minimum": 1
+                    "minimum": 1,
+                    "example": 5000000
                 },
                 "date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2025-01-01"
                 }
             }
         },
         "budget.MonthlyBudget": {
             "type": "object",
             "properties": {
-                "_": {
-                    "type": "string"
-                },
                 "budget": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 5000000
                 },
                 "date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2025-01-01T00:00:00Z"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "bf8a39e8-4226-4d04-a035-6453181878d6"
                 },
                 "user_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
                 }
             }
         },
@@ -313,10 +316,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "tubagus@example.com"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "RahasiaNegara123!"
                 }
             }
         },
@@ -324,10 +329,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "access_token": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 },
                 "token_type": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Bearer"
                 },
                 "user": {
                     "$ref": "#/definitions/user.UserResponse"
@@ -343,16 +350,19 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "tubagus@example.com"
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 6
+                    "minLength": 6,
+                    "example": "RahasiaNegara123!"
                 },
                 "username": {
                     "type": "string",
                     "maxLength": 30,
-                    "minLength": 3
+                    "minLength": 3,
+                    "example": "tubagus_aldi"
                 }
             }
         },
@@ -360,16 +370,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2025-01-01T15:00:00Z"
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "tubagus@example.com"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "tubagus_aldi"
                 }
             }
         },
@@ -377,16 +391,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2025-01-01T15:00:00Z"
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "tubagus@example.com"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "tubagus_aldi"
                 }
             }
         }
