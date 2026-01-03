@@ -12,6 +12,18 @@ func NewHandler(useCase UseCase) *Handler {
 	return &Handler{useCase: useCase}
 }
 
+// Register godoc
+// @Summary      Register new user
+// @Description  Register a new user account
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        request body RegisterRequest true "Register Payload"
+// @Success      201  {object}  RegisterResponse
+// @Failure      400  {object}  map[string]interface{}
+// @Failure      409  {object}  map[string]interface{}
+// @Failure      500  {object}  map[string]interface{}
+// @Router       /users/register [post]
 func (h *Handler) Register(c *fiber.Ctx) error {
 	var req RegisterRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -34,6 +46,17 @@ func (h *Handler) Register(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": user})
 }
 
+// Login godoc
+// @Summary      Login User
+// @Description  Login and get JWT Token
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        request body LoginRequest true "Login Payload"
+// @Success      200  {object}  LoginResponse
+// @Failure      400  {object}  map[string]interface{}
+// @Failure      401  {object}  map[string]interface{}
+// @Router       /users/login [post]
 func (h *Handler) Login(c *fiber.Ctx) error {
 	var req LoginRequest
 
@@ -65,6 +88,16 @@ func (h *Handler) Login(c *fiber.Ctx) error {
 	})
 }
 
+// GetMe godoc
+// @Summary      Get Current User Profile
+// @Description  Get currently logged in user profile based on JWT Token
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {object}  UserResponse
+// @Failure      401  {object}  map[string]interface{}
+// @Router       /users/current [get]
 func (h *Handler) GetMe(c *fiber.Ctx) error {
 	// Ambil user_id dari Locals (yang diset oleh Middleware)
 	userID, ok := c.Locals("user_id").(string)

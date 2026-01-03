@@ -1,0 +1,261 @@
+basePath: /api
+definitions:
+  budget.CreateBudgetRequest:
+    properties:
+      budget:
+        minimum: 1
+        type: number
+      date:
+        type: string
+    required:
+    - budget
+    - date
+    type: object
+  budget.MonthlyBudget:
+    properties:
+      _:
+        type: string
+      budget:
+        type: number
+      date:
+        type: string
+      id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  user.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  user.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      token_type:
+        type: string
+      user:
+        $ref: '#/definitions/user.UserResponse'
+    type: object
+  user.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      username:
+        maxLength: 30
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  user.RegisterResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  user.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: contact@tubsamy.tech
+    name: Tubagus Aldi
+  description: API Documentation for Finance Tracker App.
+  termsOfService: http://swagger.io/terms/
+  title: Finance Tracker API
+  version: "1.0"
+paths:
+  /budgets:
+    get:
+      consumes:
+      - application/json
+      description: Get list of monthly budgets with date filter
+      parameters:
+      - description: Start Date (YYYY-MM-DD)
+        in: query
+        name: start_date
+        type: string
+      - description: End Date (YYYY-MM-DD)
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/budget.MonthlyBudget'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List Budgets
+      tags:
+      - Budget
+    post:
+      consumes:
+      - application/json
+      description: Create a new global budget for a specific month
+      parameters:
+      - description: Budget Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/budget.CreateBudgetRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/budget.MonthlyBudget'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Monthly Budget
+      tags:
+      - Budget
+  /users/current:
+    get:
+      consumes:
+      - application/json
+      description: Get currently logged in user profile based on JWT Token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Current User Profile
+      tags:
+      - User
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Login and get JWT Token
+      parameters:
+      - description: Login Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login User
+      tags:
+      - User
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account
+      parameters:
+      - description: Register Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/user.RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register new user
+      tags:
+      - User
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -2,9 +2,25 @@ package main
 
 import (
 	"fmt"
+	_ "github.com/TubagusAldiMY/finance-tracker-app/backend/docs"
 	"github.com/TubagusAldiMY/finance-tracker-app/backend/internal/infra"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
+// @title           Finance Tracker API
+// @version         1.0
+// @description     API Documentation for Finance Tracker App.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name    Tubagus Aldi
+// @contact.email   contact@tubsamy.tech
+
+// @host            localhost:8080
+// @BasePath        /api
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	// 1. Init Infrastructure
 	viperConfig := infra.NewViper()
@@ -21,7 +37,7 @@ func main() {
 		Validate: validate,
 		Config:   viperConfig,
 	})
-
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 	// 3. Start Server
 	webPort := viperConfig.GetInt("web.port")
 	log.Infof("Server starting at port %d", webPort)
