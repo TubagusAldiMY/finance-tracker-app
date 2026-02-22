@@ -7,11 +7,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-func NewViper() *viper.Viper {
+func NewViper(filename string) *viper.Viper {
 	v := viper.New()
 
 	// 1. Set Nama File Config & Path
-	v.SetConfigName("config")
+	v.SetConfigName(filename)
 	v.SetConfigType("json")
 	v.AddConfigPath(".")
 	v.AddConfigPath("./backend")

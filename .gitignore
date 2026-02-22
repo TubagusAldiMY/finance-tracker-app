@@ -28,6 +28,7 @@ go.work.sum
 .env
 .ignore
 /backend/config.json
+/backend/config.telegram.json
 /frontend/.vscode
 
 # Editor/IDE
@@ -39,3 +40,5 @@ Note
 
 api
 Note.md
+node_modules/
+package-lock.json

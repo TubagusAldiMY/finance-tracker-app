@@ -29,7 +29,7 @@ import (
 // @name Authorization
 func main() {
 	// 1. Init Infrastructure
-	viperConfig := infra.NewViper()
+	viperConfig := infra.NewViper("config")
 	log := infra.NewLogger(viperConfig)
 	db := infra.NewDatabase(viperConfig, log)
 	validate := infra.NewValidator(viperConfig)
